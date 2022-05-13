@@ -1,8 +1,9 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { NavigateFunction, Location } from "react-router-dom";
+import { NavigateFunction } from "react-router-dom";
 import { toast } from "react-toastify";
 
 axios.defaults.baseURL = 'http://localhost:5207/api/'
+axios.defaults.withCredentials = true;
 
 function hasOwnProperty<X extends {}, Y extends PropertyKey>
     (obj: X, prop: Y): obj is X & Record<Y, unknown> {
@@ -74,6 +75,14 @@ const Catalog = {
     details: (id: number) => requests.get(`products/${id}`),
 }
 
+const Basket = {
+    get: () => requests.get('basket'),
+    addItem: (productId: number, quantity=1)=>
+        requests.post(`basket?productId=${productId}&quantity=${quantity}`, {}),
+    removeItem: (productId: number, quantity=1)=>
+        requests.delete(`basket?productId=${productId}&quantity=${quantity}`)
+}
+
 const TestErrors = {
     get400Error: () => requests.get('Buggy/bad-request'),
     get401Error: () => requests.get('Buggy/unauthorised'),
@@ -84,6 +93,7 @@ const TestErrors = {
 
 const agent = {
     Catalog,
+    Basket,
     TestErrors,
 }
 
